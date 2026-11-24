@@ -1,0 +1,10 @@
+<% layout("layouts/main") %>
+<section class="container narrow error-page">
+    <p class="error-code"><%= statusCode %></p>
+    <h1><%= statusCode === 404 ? "Lost in transit" : statusCode === 403 ? "Not allowed" : "Something went wrong" %></h1>
+    <p class="muted"><%= message %></p>
+    <div class="row-gap">
+        <a class="btn btn-primary" href="/listings"><%- icon("search") %> Browse stays</a>
+        <a class="btn btn-ghost" href="/">Back home</a>
+    </div>
+</section>

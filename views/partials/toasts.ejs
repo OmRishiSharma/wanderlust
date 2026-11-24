@@ -1,0 +1,14 @@
+<div class="toasts" role="region" aria-label="Notifications" aria-live="polite">
+    <% (success || []).forEach((msg) => { %>
+        <div class="toast toast-success" role="status">
+            <%- icon("check") %><span><%= msg %></span>
+            <button type="button" class="toast-close" aria-label="Dismiss"><%- icon("x") %></button>
+        </div>
+    <% }) %>
+    <% (error || []).forEach((msg) => { %>
+        <div class="toast toast-error" role="alert">
+            <%- icon("alert") %><span><%= msg %></span>
+            <button type="button" class="toast-close" aria-label="Dismiss"><%- icon("x") %></button>
+        </div>
+    <% }) %>
+</div>

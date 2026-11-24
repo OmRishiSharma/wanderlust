@@ -1,0 +1,19 @@
+<% const l = b.listing; %>
+<li class="trip reveal" style="--i: <%= i %>">
+    <% if (l) { %>
+        <a class="trip-img skeleton" href="/listings/<%= l._id %>"><img src="<%= l.image && l.image.url %>" alt="" loading="lazy" width="200" height="150"></a>
+    <% } %>
+    <div class="trip-body">
+        <h3><% if (l) { %><a href="/listings/<%= l._id %>"><%= l.title %></a><% } else { %>Listing removed<% } %></h3>
+        <% if (l) { %><p class="muted"><%- icon("pin") %><%= l.location %>, <%= l.country %></p><% } %>
+        <p><%- icon("calendar") %><%= fmtDate(b.checkIn) %> → <%= fmtDate(b.checkOut) %> · <%= b.nights %> night<%= b.nights > 1 ? "s" : "" %> · <%= b.guests %> guest<%= b.guests > 1 ? "s" : "" %></p>
+        <p><strong><%= money(b.totalPrice) %></strong> <span class="muted">total</span>
+            <% if (b.status === "cancelled") { %><span class="badge badge-muted">Cancelled</span><% } else if (!upcoming) { %><span class="badge badge-muted">Completed</span><% } else { %><span class="badge badge-ok">Confirmed</span><% } %>
+        </p>
+    </div>
+    <% if (upcoming) { %>
+        <form action="/bookings/<%= b._id %>?_method=DELETE&_csrf=<%= csrfToken %>" method="post" data-confirm="Cancel this booking?">
+            <button class="btn btn-danger-ghost btn-sm" type="submit">Cancel</button>
+        </form>
+    <% } %>
+</li>

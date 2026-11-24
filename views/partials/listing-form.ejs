@@ -1,0 +1,71 @@
+<%# Shared create/edit form. Locals: listing, categories, action, method, submitLabel %>
+<% const hosted = listing.image && listing.image.filename; %>
+<form class="form-card" method="post" action="<%= action %>" enctype="multipart/form-data" novalidate data-validate>
+    <div class="field">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="listing[title]" value="<%= listing.title || '' %>" maxlength="120" placeholder="A catchy, honest title" required>
+        <p class="field-error">Please enter a title.</p>
+    </div>
+
+    <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" name="listing[description]" rows="5" maxlength="4000" placeholder="What makes this place special?" required><%= listing.description || '' %></textarea>
+        <p class="field-error">Please add a short description.</p>
+    </div>
+
+    <div class="field">
+        <span class="label">Photo</span>
+        <div class="upload" data-upload>
+            <div class="upload-preview" data-upload-preview>
+                <% if (listing.image && listing.image.url) { %><img src="<%= listing.image.url %>" alt="Current photo"><% } else { %><%- icon("image", "icon-xl") %><% } %>
+            </div>
+            <div class="upload-controls">
+                <label class="btn btn-ghost btn-sm" for="image"><%- icon("upload") %> Choose image</label>
+                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp,image/gif" data-upload-input hidden>
+                <p class="hint" data-upload-name>JPG, PNG, WebP or GIF, up to 5&nbsp;MB.</p>
+            </div>
+        </div>
+        <details class="alt-url" <%= (!hosted && listing.image && listing.image.url) ? "open" : "" %>>
+            <summary>Or use an image link</summary>
+            <input type="url" id="imageUrl" name="listing[image][url]" value="<%= hosted ? '' : (listing.image && listing.image.url) || '' %>" placeholder="https://…">
+            <p class="field-error">Please enter a valid http(s) link.</p>
+        </details>
+    </div>
+
+    <div class="field-row">
+        <div class="field">
+            <label for="price">Price per night (₹)</label>
+            <input type="number" id="price" name="listing[price]" min="0" step="1" inputmode="numeric" value="<%= listing.price ?? '' %>" placeholder="1200" required>
+            <p class="field-error">Enter a valid price.</p>
+        </div>
+        <div class="field">
+            <label for="maxGuests">Max guests</label>
+            <input type="number" id="maxGuests" name="listing[maxGuests]" min="1" max="20" value="<%= listing.maxGuests || 4 %>" required>
+            <p class="field-error">Between 1 and 20.</p>
+        </div>
+        <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="listing[category]">
+                <% categories.forEach((c) => { %><option value="<%= c %>" <%= (listing.category || "Unique") === c ? "selected" : "" %>><%= c %></option><% }) %>
+            </select>
+        </div>
+    </div>
+
+    <div class="field-row">
+        <div class="field">
+            <label for="location">City / area</label>
+            <input type="text" id="location" name="listing[location]" value="<%= listing.location || '' %>" placeholder="Jaipur, Rajasthan" required>
+            <p class="field-error">Please enter a location.</p>
+        </div>
+        <div class="field">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="listing[country]" value="<%= listing.country || '' %>" placeholder="India" required>
+            <p class="field-error">Please enter a country.</p>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-ghost" href="<%= listing._id ? '/listings/' + listing._id : '/listings' %>">Cancel</a>
+        <button class="btn btn-primary" type="submit" data-loading-text="Saving…"><%= submitLabel %></button>
+    </div>
+</form>

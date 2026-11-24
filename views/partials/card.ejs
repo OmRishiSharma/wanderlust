@@ -1,0 +1,41 @@
+<%# Listing card. Locals: listing, favourites (array of id strings), i (index for stagger) %>
+    <% const isFav=(favourites || []).includes(String(listing._id)); %>
+        <article class="card reveal" style="--i: <%= (typeof i === 'number' ? i : 0) %>">
+            <div class="card-media skeleton">
+                <a href="/listings/<%= listing._id %>" tabindex="-1" aria-hidden="true">
+                    <img src="<%= (listing.image && listing.image.url) || 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=60' %>"
+                        alt="<%= listing.title %>" loading="lazy" decoding="async" width="600" height="450"
+                        onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=60';">
+                </a>
+                <span class="card-tag">
+                    <%= listing.category %>
+                </span>
+                <form class="fav-form" action="/listings/<%= listing._id %>/favourite?_csrf=<%= csrfToken %>"
+                    method="post">
+                    <button type="submit" class="fav-btn <%= isFav ? 'is-on' : '' %>" data-fav
+                        aria-pressed="<%= isFav %>"
+                        aria-label="<%= isFav ? 'Remove from favourites' : 'Save to favourites' %>">
+                        <%- icon("heart") %>
+                    </button>
+                </form>
+            </div>
+            <a class="card-body" href="/listings/<%= listing._id %>">
+                <div class="card-row">
+                    <h3 class="card-title">
+                        <%= listing.title %>
+                    </h3>
+                    <% if (listing.reviewCount> 0) { %>
+                        <span class="rating"><%- icon("star", "icon-fill" ) %>
+                                <%= listing.avgRating.toFixed(1) %></span>
+                        <% } else { %>
+                            <span class="rating rating-new">New</span>
+                            <% } %>
+                </div>
+                <p class="card-meta"><%- icon("pin") %>
+                        <%= listing.location %>, <%= listing.country %>
+                </p>
+                <p class="card-price"><strong>
+                        <%= money(listing.price) %>
+                    </strong> <span>/ night</span></p>
+            </a>
+        </article>

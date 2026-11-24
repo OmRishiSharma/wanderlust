@@ -1,0 +1,34 @@
+<% layout("layouts/main") %>
+<section class="container page-head">
+    <div>
+        <h1>Your trips</h1>
+        <p class="muted">Upcoming stays and your travel history.</p>
+    </div>
+</section>
+
+<section class="container">
+    <h2 class="h3">Upcoming</h2>
+    <% if (upcoming.length === 0) { %>
+        <div class="empty">
+            <%- icon("suitcase", "icon-xl") %>
+            <h3>No upcoming trips</h3>
+            <p>When you book a stay, it will show up here.</p>
+            <a class="btn btn-primary" href="/listings">Find a stay</a>
+        </div>
+    <% } else { %>
+        <ul class="trip-list">
+            <% upcoming.forEach((b, i) => { %>
+                <%- include("../partials/trip", { b, upcoming: true, i }) %>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <% if (past.length) { %>
+        <h2 class="h3 mt-lg">Past &amp; cancelled</h2>
+        <ul class="trip-list">
+            <% past.forEach((b, i) => { %>
+                <%- include("../partials/trip", { b, upcoming: false, i }) %>
+            <% }) %>
+        </ul>
+    <% } %>
+</section>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% const pageTitle = title ? `${title} · Wanderlust` : "Wanderlust · Find your next stay"; %>
+    <title><%= pageTitle %></title>
+    <meta name="description" content="<%= description %>">
+    <meta name="theme-color" content="#fe424d">
+    <link rel="canonical" href="<%= canonical %>">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Wanderlust">
+    <meta property="og:title" content="<%= pageTitle %>">
+    <meta property="og:description" content="<%= description %>">
+    <% if (ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script src="/js/theme-init.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/css/main.css">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <%- block("head").toString() %>
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <%- include("../partials/icons") %>
+    <%- include("../partials/navbar") %>
+
+    <main id="main" class="page" tabindex="-1">
+        <%- body %>
+    </main>
+
+    <%- include("../partials/footer") %>
+    <%- include("../partials/toasts") %>
+    <%- include("../partials/confirm") %>
+
+    <script src="/js/main.js" defer></script>
+    <%- block("scripts").toString() %>
+</body>
+</html>

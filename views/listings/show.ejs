@@ -1,0 +1,270 @@
+<% layout("layouts/main") %>
+<% block("head").append('<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">') %>
+<% block("scripts").append('<script src="/vendor/leaflet/leaflet.js" defer></script><script src="/js/listing-show.js" defer></script>') %>
+
+<% const canManage = isOwner || isAdmin; %>
+<% const hasCoords = listing.geometry && listing.geometry.coordinates && listing.geometry.coordinates.length === 2; %>
+
+<article class="container show">
+    <header class="show-head reveal">
+        <div>
+            <h1><%= listing.title %></h1>
+            <p class="show-sub">
+                <% if (listing.reviewCount > 0) { %>
+                    <a class="rating" href="#reviews"><%- icon("star", "icon-fill") %><strong><%= listing.avgRating.toFixed(1) %></strong> · <%= listing.reviewCount %> review<%= listing.reviewCount === 1 ? "" : "s" %></a>
+                    <span class="dot">·</span>
+                <% } %>
+                <span class="loc"><%- icon("pin") %><%= listing.location %>, <%= listing.country %></span>
+                <span class="dot">·</span>
+                <a class="tag" href="/listings?category=<%= listing.category %>"><%= listing.category %></a>
+            </p>
+        </div>
+        <div class="show-actions">
+            <% if (currentUser) { %>
+                <form action="/listings/<%= listing._id %>/favourite?_csrf=<%= csrfToken %>" method="post">
+                    <button type="submit" class="btn btn-ghost fav-btn-lg <%= isFavourite ? 'is-on' : '' %>" data-fav aria-pressed="<%= isFavourite %>">
+                        <%- icon("heart") %> <span data-fav-label><%= isFavourite ? "Saved" : "Save" %></span>
+                    </button>
+                </form>
+            <% } else { %>
+                <a href="/login" class="btn btn-ghost"><%- icon("heart") %> Save</a>
+            <% } %>
+            <% if (canManage) { %>
+                <a href="/listings/<%= listing._id %>/edit" class="btn btn-ghost"><%- icon("edit") %> Edit</a>
+                <form action="/listings/<%= listing._id %>?_method=DELETE&_csrf=<%= csrfToken %>" method="post"
+                      data-confirm="Delete “<%= listing.title %>”? Its reviews and bookings will be removed too.">
+                    <button type="submit" class="btn btn-danger-ghost"><%- icon("trash") %> Delete</button>
+                </form>
+            <% } %>
+        </div>
+    </header>
+
+    <div class="show-hero reveal skeleton">
+        <img src="<%= (listing.image && listing.image.url) || 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80' %>" 
+             alt="<%= listing.title %>" 
+             width="1200" height="700" 
+             fetchpriority="high"
+             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80';">
+    </div>
+
+    <div class="show-layout">
+        <div class="show-main">
+            <section class="host-row reveal">
+                <span class="avatar avatar-lg"><%- initials(listing.owner && listing.owner.username) %></span>
+                <div>
+                    <h2>Hosted by <%= listing.owner ? listing.owner.username : "a former member" %></h2>
+                    <p class="muted">Up to <%= listing.maxGuests %> guest<%= listing.maxGuests === 1 ? "" : "s" %><% if (listing.owner && listing.owner.createdAt) { %> · Hosting since <%= fmtDateTime(listing.owner.createdAt) %><% } %></p>
+                </div>
+            </section>
+
+            <section class="reveal">
+                <h2 class="h3">About this place</h2>
+                <p class="prose-text"><%= listing.description %></p>
+            </section>
+
+            <section class="reveal location-section">
+                <div class="location-header">
+                    <div>
+                        <h2 class="h3">Where you'll be</h2>
+                        <p class="muted"><%- icon("pin") %> <%= listing.location %>, <%= listing.country %></p>
+                    </div>
+                    <a class="btn btn-ghost btn-sm btn-maps" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(listing.location + ', ' + listing.country) %>" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <span>Open in Google Maps</span>
+                    </a>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-features">
+                        <div class="loc-feature">
+                            <div class="loc-icon"><%- icon("pin") %></div>
+                            <div>
+                                <strong>Prime Location</strong>
+                                <p class="muted">Set in <%= listing.location %>, close to local markets, scenic spots, and dining.</p>
+                            </div>
+                        </div>
+                        <div class="loc-feature">
+                            <div class="loc-icon"><%- icon("suitcase") %></div>
+                            <div>
+                                <strong>Getting Around</strong>
+                                <p class="muted">Convenient transit options, airport connections, and walkable neighborhood streets.</p>
+                            </div>
+                        </div>
+                        <div class="loc-feature">
+                            <div class="loc-icon"><%- icon("heart") %></div>
+                            <div>
+                                <strong>Guest Privacy</strong>
+                                <p class="muted">Exact GPS coordinates &amp; host check-in instructions unlocked upon reservation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% if (hasCoords) { %>
+                    <details class="location-map-toggle" data-map-details>
+                        <summary class="btn btn-ghost btn-sm">
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+                            <span>Toggle Interactive Map</span>
+                        </summary>
+                        <div id="map" class="map map-sm" role="region" aria-label="Map showing <%= listing.location %>"
+                             data-lng="<%= listing.geometry.coordinates[0] %>" data-lat="<%= listing.geometry.coordinates[1] %>"
+                             data-title="<%= listing.title %>"></div>
+                    </details>
+                    <% } %>
+                </div>
+            </section>
+
+            <% if (canManage && reservations.length) { %>
+            <section class="reveal">
+                <h2 class="h3">Upcoming reservations</h2>
+                <ul class="res-list">
+                    <% reservations.forEach((b) => { %>
+                        <li>
+                            <span class="avatar"><%- initials(b.guest && b.guest.username) %></span>
+                            <div>
+                                <strong><%= b.guest ? b.guest.username : "Guest" %></strong>
+                                <span class="muted"><%= fmtDate(b.checkIn) %> → <%= fmtDate(b.checkOut) %></span>
+                            </div>
+                            <form action="/bookings/<%= b._id %>?_method=DELETE&_csrf=<%= csrfToken %>" method="post"
+                                  data-confirm="Cancel this reservation?">
+                                <button class="btn btn-danger-ghost btn-sm" type="submit">Cancel</button>
+                            </form>
+                        </li>
+                    <% }) %>
+                </ul>
+            </section>
+            <% } %>
+
+            <section id="reviews" class="reveal">
+                <h2 class="h3">Reviews</h2>
+
+                <% if (listing.reviewCount > 0) { %>
+                <div class="review-summary">
+                    <div class="score">
+                        <strong><%= listing.avgRating.toFixed(1) %></strong>
+                        <div class="stars-static" aria-label="<%= listing.avgRating.toFixed(1) %> out of 5">
+                            <% for (let s = 1; s <= 5; s++) { %><%- icon("star", s <= Math.round(listing.avgRating) ? "icon-fill" : "icon-dim") %><% } %>
+                        </div>
+                        <span class="muted"><%= listing.reviewCount %> review<%= listing.reviewCount === 1 ? "" : "s" %></span>
+                    </div>
+                    <ul class="histogram">
+                        <% for (let s = 5; s >= 1; s--) { %>
+                            <li><span><%= s %></span>
+                                <div class="bar"><i style="--w: <%= listing.reviewCount ? Math.round(histogram[s] / listing.reviewCount * 100) : 0 %>%"></i></div>
+                                <span class="muted"><%= histogram[s] %></span>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+                <% } %>
+
+                <% if (!currentUser) { %>
+                    <p class="note"><a href="/login">Log in</a> to leave a review.</p>
+                <% } else if (isOwner) { %>
+                    <p class="note">You can't review your own listing.</p>
+                <% } else if (myReview) { %>
+                    <p class="note">You've reviewed this stay. Delete your review below to write a new one.</p>
+                <% } else { %>
+                    <form class="review-form" action="/listings/<%= listing._id %>/reviews?_csrf=<%= csrfToken %>" method="post" novalidate data-validate>
+                        <h3 class="h4">Leave a review</h3>
+                        <fieldset class="star-input">
+                            <legend class="label">Your rating</legend>
+                            <% for (let s = 5; s >= 1; s--) { %>
+                                <input type="radio" id="star<%= s %>" name="review[rating]" value="<%= s %>" required>
+                                <label for="star<%= s %>" title="<%= s %> star<%= s > 1 ? 's' : '' %>"><%- icon("star") %><span class="sr-only"><%= s %> star<%= s > 1 ? "s" : "" %></span></label>
+                            <% } %>
+                            <p class="field-error">Please choose a rating.</p>
+                        </fieldset>
+                        <div class="field">
+                            <label for="comment">Your review</label>
+                            <textarea id="comment" name="review[comment]" rows="4" maxlength="1500" placeholder="How was your stay?" required></textarea>
+                            <p class="field-error">Please write a few words.</p>
+                        </div>
+                        <button class="btn btn-primary" type="submit" data-loading-text="Posting…">Post review</button>
+                    </form>
+                <% } %>
+
+                <% if (reviews.length === 0) { %>
+                    <p class="muted">No reviews yet. Be the first to share your experience.</p>
+                <% } %>
+                <ul class="reviews">
+                    <% reviews.forEach((r) => { %>
+                        <li class="review">
+                            <span class="avatar"><%- initials(r.author && r.author.username) %></span>
+                            <div class="review-body">
+                                <div class="review-top">
+                                    <strong><%= r.author ? r.author.username : "Former member" %></strong>
+                                    <span class="muted"><%= fmtDate(r.createdAt) %></span>
+                                </div>
+                                <div class="stars-static" aria-label="<%= r.rating %> out of 5">
+                                    <% for (let s = 1; s <= 5; s++) { %><%- icon("star", s <= r.rating ? "icon-fill" : "icon-dim") %><% } %>
+                                </div>
+                                <p><%= r.comment %></p>
+                            </div>
+                            <% if (currentUser && ((r.author && String(r.author._id) === String(currentUser._id)) || isAdmin)) { %>
+                                <form action="/listings/<%= listing._id %>/reviews/<%= r._id %>?_method=DELETE&_csrf=<%= csrfToken %>" method="post"
+                                      data-confirm="Delete this review?">
+                                    <button class="icon-btn" type="submit" aria-label="Delete review"><%- icon("trash") %></button>
+                                </form>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                </ul>
+            </section>
+        </div>
+
+        <aside class="show-side">
+            <div id="booking" class="booking-card reveal" data-booking data-price="<%= listing.price %>" data-max-guests="<%= listing.maxGuests %>">
+                <p class="booking-price"><strong><%= money(listing.price) %></strong> <span>/ night</span></p>
+
+                <% if (isOwner) { %>
+                    <p class="note">This is your listing. Guests can book it from here.</p>
+                <% } else if (!currentUser) { %>
+                    <p class="muted">Log in to check availability and book your stay.</p>
+                    <a class="btn btn-primary btn-block" href="/login">Log in to book</a>
+                <% } else { %>
+                    <form action="/listings/<%= listing._id %>/bookings?_csrf=<%= csrfToken %>" method="post" novalidate>
+                        <div class="booking-dates-box">
+                            <div class="b-date-cell">
+                                <label for="booking-checkin">Check-in</label>
+                                <input type="date" id="booking-checkin" name="booking[checkIn]" min="<%= today %>" required data-checkin>
+                            </div>
+                            <div class="b-date-divider" aria-hidden="true"></div>
+                            <div class="b-date-cell">
+                                <label for="booking-checkout">Check-out</label>
+                                <input type="date" id="booking-checkout" name="booking[checkOut]" min="<%= today %>" required data-checkout>
+                            </div>
+                        </div>
+
+                        <div class="guest-selector-block">
+                            <div class="guest-selector-header">
+                                <label for="booking-guests" class="guest-label">
+                                    <span class="guest-label-title">Guests</span>
+                                    <span class="guest-label-sub">Max <%= listing.maxGuests %> guest<%= listing.maxGuests > 1 ? 's' : '' %></span>
+                                </label>
+                                <div class="guest-stepper">
+                                    <button type="button" class="stepper-btn" data-guest-dec aria-label="Decrease guests" title="Decrease" disabled>
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 13H5v-2h14v2z"/></svg>
+                                    </button>
+                                    <input type="number" id="booking-guests" name="booking[guests]" class="guest-input" min="1" max="<%= listing.maxGuests %>" value="1" required data-guest-input aria-label="Number of guests">
+                                    <button type="button" class="stepper-btn" data-guest-inc aria-label="Increase guests" title="Increase" <%= listing.maxGuests <= 1 ? 'disabled' : '' %>>
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="guest-hint muted">Type manually or use + / &minus; to adjust</p>
+                        </div>
+
+                        <p class="booking-msg" data-booking-msg role="status" aria-live="polite"></p>
+                        <div class="booking-total" data-booking-total hidden>
+                            <div><span data-nights></span><span data-subtotal></span></div>
+                            <div class="total"><span>Total</span><strong data-total></strong></div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit" data-loading-text="Booking…" data-booking-submit>Reserve</button>
+                        <p class="hint center">You won't be charged. This is a demo.</p>
+                    </form>
+                <% } %>
+            </div>
+            <script type="application/json" id="booked-data"><%- json(booked) %></script>
+        </aside>
+    </div>
+</article>

@@ -1,0 +1,46 @@
+<header class="nav" data-nav>
+    <div class="container nav-inner">
+        <a class="brand" href="/" aria-label="Wanderlust home">
+            <svg class="brand-mark" viewBox="0 0 36 36" aria-hidden="true"><use href="#i-logo"/></svg>
+            <span class="brand-text">Wanderlust</span>
+        </a>
+
+        <nav class="nav-links" id="nav-menu" aria-label="Main">
+            <a href="/listings" class="nav-link <%= currentPath === '/listings' ? 'is-active' : '' %>">Explore</a>
+            <% if (currentUser) { %>
+                <a href="/favourites" class="nav-link <%= currentPath === '/favourites' ? 'is-active' : '' %>">Favourites</a>
+                <a href="/trips" class="nav-link <%= currentPath === '/trips' ? 'is-active' : '' %>">Trips</a>
+            <% } %>
+            <a href="/listings/new" class="nav-link nav-host <%= currentPath === '/listings/new' ? 'is-active' : '' %>">Become a host</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button type="button" class="icon-btn" data-theme-toggle aria-label="Toggle dark mode" title="Toggle theme">
+                <%- icon("moon", "theme-moon") %><%- icon("sun", "theme-sun") %>
+            </button>
+            <% if (currentUser) { %>
+                <details class="user-menu">
+                    <summary class="avatar-btn" aria-label="Account menu">
+                        <span class="avatar"><%- initials(currentUser.username) %></span>
+                    </summary>
+                    <div class="menu-panel">
+                        <p class="menu-head">Signed in as<br><strong><%= currentUser.username %></strong>
+                            <% if (currentUser.role === "admin") { %><span class="badge">Admin</span><% } %></p>
+                        <a href="/trips"><%- icon("suitcase") %> Your trips</a>
+                        <a href="/favourites"><%- icon("heart") %> Favourites</a>
+                        <a href="/listings/new"><%- icon("plus") %> New listing</a>
+                        <form action="/logout?_csrf=<%= csrfToken %>" method="post">
+                            <button type="submit"><%- icon("logout") %> Log out</button>
+                        </form>
+                    </div>
+                </details>
+            <% } else { %>
+                <a href="/login" class="btn btn-ghost btn-sm nav-auth">Log in</a>
+                <a href="/signup" class="btn btn-primary btn-sm nav-auth">Sign up</a>
+            <% } %>
+            <button type="button" class="icon-btn nav-toggle" data-nav-toggle aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+                <%- icon("menu") %>
+            </button>
+        </div>
+    </div>
+</header>

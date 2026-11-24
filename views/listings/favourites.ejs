@@ -1,0 +1,23 @@
+<% layout("layouts/main") %>
+<section class="container page-head">
+    <div>
+        <h1>Your favourites</h1>
+        <p class="muted">Stays you've saved for later.</p>
+    </div>
+</section>
+<section class="container">
+    <% if (listings.length === 0) { %>
+        <div class="empty">
+            <%- icon("heart", "icon-xl") %>
+            <h3>Nothing saved yet</h3>
+            <p>Tap the heart on any stay to keep it here.</p>
+            <a class="btn btn-primary" href="/listings">Browse stays</a>
+        </div>
+    <% } else { %>
+        <div class="grid">
+            <% listings.forEach((listing, i) => { %>
+                <%- include("../partials/card", { listing, favourites, i }) %>
+            <% }) %>
+        </div>
+    <% } %>
+</section>

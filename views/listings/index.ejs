@@ -1,0 +1,94 @@
+<% layout("layouts/main") %>
+<% block("head").append('<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">') %>
+<% block("scripts").append('<script src="/vendor/leaflet/leaflet.js" defer></script><script src="/js/map-index.js" defer></script>') %>
+
+<section class="container page-head">
+    <div>
+        <h1>Explore stays</h1>
+        <p class="muted"><%= pg.total %> stay<%= pg.total === 1 ? "" : "s" %><%= params.q ? ` matching “${params.q}”` : "" %></p>
+    </div>
+    <div class="page-head-actions">
+        <button type="button" class="btn btn-ghost" data-filter-toggle data-initial-open="<%= activeFilters ? 'true' : 'false' %>" aria-expanded="<%= activeFilters ? 'true' : 'false' %>" aria-controls="filters">
+            <%- icon("sliders") %> Filters<% if (activeFilters) { %> <span class="badge"><%= activeFilters %></span><% } %>
+        </button>
+        <button type="button" class="btn btn-ghost" data-map-toggle aria-pressed="false" <%= markers.length ? "" : "disabled" %>>
+            <%- icon("map") %> <span>Map</span>
+        </button>
+    </div>
+</section>
+
+<section class="container">
+    <form id="filters" class="filters" action="/listings" method="get" <%= activeFilters ? "" : "hidden" %>>
+        <label class="field">
+            <span>Search</span>
+            <input type="search" name="q" value="<%= params.q %>" placeholder="Place, title or keyword">
+        </label>
+        <label class="field">
+            <span>Category</span>
+            <select name="category">
+                <option value="">All categories</option>
+                <% categories.forEach((c) => { %><option value="<%= c %>" <%= params.category === c ? "selected" : "" %>><%= c %></option><% }) %>
+            </select>
+        </label>
+        <label class="field">
+            <span>Min price</span>
+            <input type="number" name="minPrice" min="0" inputmode="numeric" value="<%= params.minPrice %>" placeholder="0">
+        </label>
+        <label class="field">
+            <span>Max price</span>
+            <input type="number" name="maxPrice" min="0" inputmode="numeric" value="<%= params.maxPrice %>" placeholder="Any">
+        </label>
+        <label class="field">
+            <span>Sort by</span>
+            <select name="sort">
+                <% Object.entries(sortLabels).forEach(([k, label]) => { %>
+                    <option value="<%= k %>" <%= params.sort === k ? "selected" : "" %>><%= label %></option>
+                <% }) %>
+            </select>
+        </label>
+        <div class="filters-actions">
+            <button class="btn btn-primary" type="submit">Apply</button>
+            <a class="btn btn-ghost" href="/listings">Reset</a>
+        </div>
+    </form>
+
+    <div class="chips" role="list" aria-label="Categories">
+        <a class="chip <%= !params.category ? 'is-active' : '' %>" role="listitem" href="<%= linkTo({ category: '', page: '' }) %>">All</a>
+        <% categories.forEach((c) => { %>
+            <a class="chip <%= params.category === c ? 'is-active' : '' %>" role="listitem" href="<%= linkTo({ category: c, page: '' }) %>">
+                <%- icon(CATEGORY_ICONS[c] || "compass") %><%= c %>
+            </a>
+        <% }) %>
+    </div>
+
+    <div class="map-wrap" data-map-wrap hidden>
+        <div id="map" class="map" role="region" aria-label="Map of listings"></div>
+    </div>
+    <script type="application/json" id="map-data"><%- json(markers) %></script>
+
+    <% if (listings.length === 0) { %>
+        <div class="empty">
+            <%- icon("search", "icon-xl") %>
+            <h3>No stays match your search</h3>
+            <p>Try removing a filter or searching for something broader.</p>
+            <a class="btn btn-primary" href="/listings">Clear filters</a>
+        </div>
+    <% } else { %>
+        <div class="grid">
+            <% listings.forEach((listing, i) => { %>
+                <%- include("../partials/card", { listing, favourites, i }) %>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <% if (pg.pages > 1) { %>
+        <nav class="pagination" aria-label="Pagination">
+            <a class="page-btn <%= pg.hasPrev ? '' : 'is-disabled' %>" <% if (pg.hasPrev) { %>href="<%= linkTo({ page: pg.page - 1 }) %>"<% } else { %>aria-disabled="true"<% } %> aria-label="Previous page"><%- icon("left") %></a>
+            <% pages.forEach((p) => { %>
+                <% if (p === "…") { %><span class="page-gap">…</span>
+                <% } else { %><a class="page-btn <%= p === pg.page ? 'is-active' : '' %>" href="<%= linkTo({ page: p }) %>" <%= p === pg.page ? 'aria-current=page' : '' %>><%= p %></a><% } %>
+            <% }) %>
+            <a class="page-btn <%= pg.hasNext ? '' : 'is-disabled' %>" <% if (pg.hasNext) { %>href="<%= linkTo({ page: pg.page + 1 }) %>"<% } else { %>aria-disabled="true"<% } %> aria-label="Next page"><%- icon("right") %></a>
+        </nav>
+    <% } %>
+</section>

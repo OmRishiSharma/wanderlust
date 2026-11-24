@@ -1,0 +1,12 @@
+<% layout("layouts/main") %>
+<section class="container narrow">
+    <div class="page-head page-head-col">
+        <h1>Create a new listing</h1>
+        <p class="muted">Share your space. We'll place it on the map automatically from the location you enter.</p>
+    </div>
+    <%- include("../partials/listing-form", {
+        listing, categories,
+        action: `/listings?_csrf=${csrfToken}`,
+        submitLabel: "Publish listing"
+    }) %>
+</section>

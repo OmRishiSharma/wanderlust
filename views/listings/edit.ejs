@@ -1,0 +1,12 @@
+<% layout("layouts/main") %>
+<section class="container narrow">
+    <div class="page-head page-head-col">
+        <h1>Edit your listing</h1>
+        <p class="muted"><%= listing.title %></p>
+    </div>
+    <%- include("../partials/listing-form", {
+        listing, categories,
+        action: `/listings/${listing._id}?_method=PUT&_csrf=${csrfToken}`,
+        submitLabel: "Save changes"
+    }) %>
+</section>

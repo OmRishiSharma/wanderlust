@@ -1,0 +1,191 @@
+{
+  "Malibu, United States": {
+    "type": "Point",
+    "coordinates": [
+      -118.689423,
+      34.035591
+    ]
+  },
+  "New York City, United States": {
+    "type": "Point",
+    "coordinates": [
+      -74.0060152,
+      40.7127281
+    ]
+  },
+  "Aspen, United States": {
+    "type": "Point",
+    "coordinates": [
+      -106.82356,
+      39.1911128
+    ]
+  },
+  "Florence, Italy": {
+    "type": "Point",
+    "coordinates": [
+      11.2556404,
+      43.7697955
+    ]
+  },
+  "Portland, United States": {
+    "type": "Point",
+    "coordinates": [
+      -122.674194,
+      45.5202471
+    ]
+  },
+  "Cancun, Mexico": {
+    "type": "Point",
+    "coordinates": [
+      -86.8425761,
+      21.1527467
+    ]
+  },
+  "Lake Tahoe, United States": {
+    "type": "Point",
+    "coordinates": [
+      -120.0503528,
+      39.0885405
+    ]
+  },
+  "Los Angeles, United States": {
+    "type": "Point",
+    "coordinates": [
+      -118.2427676,
+      34.0536923
+    ]
+  },
+  "Verbier, Switzerland": {
+    "type": "Point",
+    "coordinates": [
+      7.2286765,
+      46.0961011
+    ]
+  },
+  "Serengeti National Park, Tanzania": {
+    "type": "Point",
+    "coordinates": [
+      34.6983828,
+      -2.3712909
+    ]
+  },
+  "Amsterdam, Netherlands": {
+    "type": "Point",
+    "coordinates": [
+      4.8924534,
+      52.3730796
+    ]
+  },
+  "Fiji, Fiji": {
+    "type": "Point",
+    "coordinates": [
+      178.4385779,
+      -18.1196781
+    ]
+  },
+  "Cotswolds, United Kingdom": {
+    "type": "Point",
+    "coordinates": [
+      -0.2303335,
+      51.7489426
+    ]
+  },
+  "Boston, United States": {
+    "type": "Point",
+    "coordinates": [
+      -71.0578303,
+      42.3588336
+    ]
+  },
+  "Bali, Indonesia": {
+    "type": "Point",
+    "coordinates": [
+      115.1919203,
+      -8.2271303
+    ]
+  },
+  "Banff, Canada": {
+    "type": "Point",
+    "coordinates": [
+      -115.5720773,
+      51.175076
+    ]
+  },
+  "Miami, United States": {
+    "type": "Point",
+    "coordinates": [
+      -80.1935973,
+      25.7741566
+    ]
+  },
+  "Phuket, Thailand": {
+    "type": "Point",
+    "coordinates": [
+      98.3529292,
+      7.9366015
+    ]
+  },
+  "Scottish Highlands, United Kingdom": {
+    "type": "Point",
+    "coordinates": [
+      -5,
+      56.8
+    ]
+  },
+  "Dubai, United Arab Emirates": {
+    "type": "Point",
+    "coordinates": [
+      55.1885624,
+      25.0742823
+    ]
+  },
+  "Montana, United States": {
+    "type": "Point",
+    "coordinates": [
+      -109.638757,
+      47.3752671
+    ]
+  },
+  "Mykonos, Greece": {
+    "type": "Point",
+    "coordinates": [
+      25.3923149,
+      37.4513937
+    ]
+  },
+  "Costa Rica, Costa Rica": {
+    "type": "Point",
+    "coordinates": [
+      -53.3070077,
+      -18.3481935
+    ]
+  },
+  "Charleston, United States": {
+    "type": "Point",
+    "coordinates": [
+      -79.9399309,
+      32.7884363
+    ]
+  },
+  "Tokyo, Japan": {
+    "type": "Point",
+    "coordinates": [
+      139.7638947,
+      35.6768601
+    ]
+  },
+  "New Hampshire, United States": {
+    "type": "Point",
+    "coordinates": [
+      -71.6553992,
+      43.4849133
+    ]
+  },
+  "Maldives, Maldives": {
+    "type": "Point",
+    "coordinates": [
+      73.0504369,
+      6.8441728
+    ]
+  }
+}

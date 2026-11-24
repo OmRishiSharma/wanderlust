@@ -1,0 +1,100 @@
+<% layout("layouts/main") %>
+
+<section class="hero">
+    <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+    <div class="container hero-inner">
+        <p class="eyebrow reveal" style="--i:0"><%- icon("spark") %> Stays worth the journey</p>
+        <h1 class="hero-title reveal" style="--i:1">Find a place that feels like <em>somewhere else.</em></h1>
+        <p class="hero-sub reveal" style="--i:2">Cabins above the clouds, villas on the water, lofts in the city. Discover and book unique stays from hosts around the world.</p>
+
+        <form class="hero-search reveal" style="--i:3" action="/listings" method="get" role="search">
+            <label class="hs-field">
+                <span>Where</span>
+                <input type="search" name="q" placeholder="Try &ldquo;Bali&rdquo; or &ldquo;cabin&rdquo;" autocomplete="off">
+            </label>
+            <label class="hs-field hs-small">
+                <span>Max price / night</span>
+                <input type="number" name="maxPrice" min="0" inputmode="numeric" placeholder="Any price">
+            </label>
+            <button class="btn btn-primary hs-btn" type="submit"><%- icon("search") %> Search</button>
+        </form>
+
+        <ul class="hero-stats reveal" style="--i:4">
+            <li><strong data-count="<%= stats.listings %>"><%= stats.listings %></strong><span>unique stays</span></li>
+            <li><strong data-count="<%= stats.countries %>"><%= stats.countries %></strong><span>countries</span></li>
+            <% if (stats.rating) { %><li><strong><%= stats.rating.toFixed(1) %></strong><span>average guest rating</span></li><% } %>
+        </ul>
+    </div>
+</section>
+
+<section class="section container">
+    <div class="section-head reveal">
+        <h2>Browse by vibe</h2>
+        <p>Pick a category and we'll narrow things down.</p>
+    </div>
+    <div class="cat-grid">
+        <% categories.forEach((c, i) => { %>
+            <a class="cat-tile reveal" style="--i: <%= i %>" href="/listings?category=<%= c %>">
+                <span class="cat-icon"><%- icon(CATEGORY_ICONS[c] || "compass") %></span>
+                <strong><%= c %></strong>
+                <small><%= counts[c] || 0 %> stays</small>
+            </a>
+        <% }) %>
+    </div>
+</section>
+
+<section class="section container">
+    <div class="section-head section-head-row reveal">
+        <div>
+            <h2>Guest favourites</h2>
+            <p>The highest rated stays right now.</p>
+        </div>
+        <a class="link-arrow" href="/listings?sort=rating">See all <%- icon("arrow") %></a>
+    </div>
+    <% if (featured.length === 0) { %>
+        <div class="empty">
+            <%- icon("home", "icon-xl") %>
+            <h3>No stays yet</h3>
+            <p>Be the first to host something unforgettable.</p>
+            <a class="btn btn-primary" href="/listings/new">Create a listing</a>
+        </div>
+    <% } else { %>
+        <div class="grid">
+            <% featured.forEach((listing, i) => { %>
+                <%- include("../partials/card", { listing, favourites: currentUser ? (currentUser.favourites || []).map(String) : [], i }) %>
+            <% }) %>
+        </div>
+    <% } %>
+</section>
+
+<section class="section container">
+    <div class="section-head reveal">
+        <h2>How it works</h2>
+    </div>
+    <ol class="steps">
+        <li class="step reveal" style="--i:0"><span class="step-n">1</span><h3>Search</h3><p>Filter by place, category and price to find stays that fit your trip.</p></li>
+        <li class="step reveal" style="--i:1"><span class="step-n">2</span><h3>Pick your dates</h3><p>See live availability on the map and calendar, and book in seconds.</p></li>
+        <li class="step reveal" style="--i:2"><span class="step-n">3</span><h3>Travel &amp; review</h3><p>Enjoy your stay, then rate it so the next guest knows what to expect.</p></li>
+    </ol>
+</section>
+
+<section class="section container">
+    <div class="cta reveal">
+        <div>
+            <h2>Got a space to share?</h2>
+            <p>Create a listing in minutes: add photos, set your price and start welcoming guests.</p>
+        </div>
+        <a class="btn btn-light btn-lg" href="/listings/new">Become a host <%- icon("arrow") %></a>
+    </div>
+</section>
+
+<% if (latest.length) { %>
+<section class="section container">
+    <div class="section-head reveal"><h2>Just added</h2></div>
+    <div class="grid">
+        <% latest.forEach((listing, i) => { %>
+            <%- include("../partials/card", { listing, favourites: currentUser ? (currentUser.favourites || []).map(String) : [], i }) %>
+        <% }) %>
+    </div>
+</section>
+<% } %>
