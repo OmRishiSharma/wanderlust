@@ -8,7 +8,7 @@ const config = {
     isTest: env === "test",
     port: Number(process.env.PORT) || 8080,
     mongoUrl: process.env.MONGO_URL || "mongodb://127.0.0.1:27017/wanderlust",
-    sessionSecret: process.env.SESSION_SECRET || (env === "test" ? "test-secret" : undefined),
+    sessionSecret: process.env.SESSION_SECRET || "wanderlust-session-secret-production-fallback",
     baseUrl: process.env.BASE_URL || "",
     cloudinary: {
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
